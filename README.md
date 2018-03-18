@@ -1,12 +1,12 @@
-##Social Network Project - Friend Management
+##Social Network Project - Friend Management##
 
 This module implements friend management of Social Network project.
 
-###Getting Started
+###Getting Started###
 
-Please use git to download the source code.
+Please download the source code from.
 
-```git clone https://github.com/chenhaohowie/socialnetwork.git```
+```https://github.com/chenhaohowie/socialnetwork```
 
 Go to the project folder and run below.
 
@@ -16,7 +16,7 @@ It will download the image from the Docker Hub and bring up the application subs
 
 Or, you can run using maven.
 
-```mvn spring-boot:run```
+```mvn clean package spring-boot:run```
 
 Please access below URL once the application is up, which will facilitate the testing.
 
@@ -26,7 +26,7 @@ For accessing Database, please use below URL.
 
 <http://localhost:8080/h2/login.jsp>
 
-###Implementation details
+###Implementation details###
 
 1. The project is built on top of Spring Boot. Dependencies are Spring WEB + SPRING JPA + HIBERNATE + H2
 2. Class introduction:
@@ -36,5 +36,5 @@ For accessing Database, please use below URL.
     * `Person` class is the self-contained entity
     * And some other classes, like `GlobalExceptionHandler` which is the central place handling exceptions
 3. Four tables will be created during application startup. `PERSON` table will be mapped to the entity and the rest are join tables as many-to-many relationship. Predefined data `data.sql` will be loaded into `PERSON` table.
-4. To run the test cases, use below
+4. To run the test cases only, use below
     * `mvn test`
