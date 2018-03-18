@@ -16,5 +16,5 @@ public interface FriendManagementService {
 
     void blockPerson(String requestor, String target);
 
-    Set<Person> getAllEligiblePersons(String email);
+    Set<Person> getAllEligibleSubscriptions(String email);
 }

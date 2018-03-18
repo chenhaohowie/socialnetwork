@@ -39,4 +39,13 @@ For accessing Database, please use below URL.
 4. To run the test cases only, use below
     * `mvn test`
 5. It uses H2 as the database for demonstration purpose, in real development environment, it can be replaced by Oracle or MariaDB RDBMS.
-    
+
+### Note
+
+In REST `GET` method, please input the well formatted JSON string as described in the requirements, like:
+
+```
+{"email":"john@example.com"}
+{"friends":["andy@example.com","lisa@example.com"]}
+{"sender":"john@example.com","text":"Hello World! kate@example.com"}
+```

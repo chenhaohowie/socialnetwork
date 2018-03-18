@@ -139,7 +139,7 @@ public class FriendManagementServiceImpl implements FriendManagementService {
      * @return the eligible persons
      */
     @Override
-    public Set<Person> getAllEligiblePersons(String email) {
+    public Set<Person> getAllEligibleSubscriptions(String email) {
         Person person = getPerson(email);
         Set<Person> persons = new HashSet<>();
         persons.addAll(person.getFriends());

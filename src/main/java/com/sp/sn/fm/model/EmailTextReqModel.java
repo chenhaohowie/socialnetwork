@@ -1,5 +1,8 @@
 package com.sp.sn.fm.model;
 
+import com.sp.sn.fm.validator.EmailValidator;
+
+import javax.validation.ValidationException;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
@@ -26,5 +29,14 @@ public class EmailTextReqModel {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public void validate() {
+        if (sender == null) {
+            throw new ValidationException("Requested email cannot be null");
+        }
+        if (! EmailValidator.validate(sender)) {
+            throw new ValidationException(("must be a well-formed email address"));
+        }
     }
 }

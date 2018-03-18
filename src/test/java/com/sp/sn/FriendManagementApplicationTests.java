@@ -8,8 +8,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -20,8 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,13 +33,12 @@ import java.util.Map;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FriendManagementApplicationTests {
 
-	private final static String ver = "v1";
-	private final static String ADD_FRIEND_URL = String.format("/api/%s/friends", ver);
-	private final static String GET_FRIEND_URL = String.format("/api/%s/friends/all", ver);
-	private final static String COMMON_FRIEND_URL = String.format("/api/%s/friends/common", ver);
-	private final static String BLOCK_URL = String.format("/api/%s/person/block", ver);
-	private final static String SUBSCRIBE_URL = String.format("/api/%s/subscriptions", ver);
-	private final static String SUBSCRIBE_ELIGIBLE_URL = String.format("/api/%s/subscriptions/eligibility", ver);
+	private final static String ADD_FRIEND_URL = "/api/v1/friends";
+	private final static String GET_FRIEND_URL = "/api/v1/friends/%s";
+	private final static String COMMON_FRIEND_URL = "/api/v1/friends/common/%s";
+	private final static String BLOCK_URL = "/api/v1/person/blocking";
+	private final static String SUBSCRIBE_URL = "/api/v1/person/subscriptions";
+	private final static String SUBSCRIBE_ELIGIBLE_URL = "/api/v1/subscriptions/%s/eligibilities";
 
 	@LocalServerPort
 	private int port;
@@ -118,7 +116,7 @@ public class FriendManagementApplicationTests {
 	}
 
 	@Test
-	public void ba_GetAllFriends_success() {
+	public void ba_GetAllFriends_success() throws UnsupportedEncodingException {
 		Map<String, List<String>> map = new HashMap<>();
 		List<String> emails = new ArrayList<>();
 		emails.add("john@example.com");
@@ -128,57 +126,42 @@ public class FriendManagementApplicationTests {
 		String expected = "{\"success\":true}";
 		Assert.assertEquals("testGetAllFriends_a_success", expected, response.getBody());
 
-		Map<String, String> getReq = new HashMap<>();
-		getReq.put("email", "john@example.com");
-		response = requestToRestApi(HttpMethod.PUT, GET_FRIEND_URL, getReq);
+
+		response = requestToRestApi(HttpMethod.GET, String.format(GET_FRIEND_URL, URLEncoder.encode("{\"email\":\"john@example.com\"}", "UTF-8")), null);
 		expected = "{\"success\":true,\"friends\":[\"lisa@example.com\",\"andy@example.com\"],\"count\":2}";
 		Assert.assertEquals("ba_GetAllFriends_success", expected, response.getBody());
 	}
 
 	@Test
-	public void bb_GetAllFriends_personNotExist() {
-		Map<String, String> getReq = new HashMap<>();
-		getReq.put("email", "any@example.com");
-		ResponseEntity<String> response = requestToRestApi(HttpMethod.PUT, GET_FRIEND_URL, getReq);
+	public void bb_GetAllFriends_personNotExist() throws UnsupportedEncodingException {
+		ResponseEntity<String> response = requestToRestApi(HttpMethod.GET, String.format(GET_FRIEND_URL, URLEncoder.encode("{\"email\":\"any@example.com\"}", "UTF-8")), null);
 		String expected = "{\"status\":404,\"message\":\"Person any@example.com does not exist\"}";
 		Assert.assertEquals("bb_GetAllFriends_personNotExist", expected, response.getBody());
 	}
 
 	@Test
-	public void bc_GetAllFriends_hasNoFriends() {
-		Map<String, String> getReq = new HashMap<>();
-		getReq.put("email", "jike@example.com");
-		ResponseEntity<String> response = requestToRestApi(HttpMethod.PUT, GET_FRIEND_URL, getReq);
+	public void bc_GetAllFriends_hasNoFriends() throws UnsupportedEncodingException {
+		ResponseEntity<String> response = requestToRestApi(HttpMethod.GET, String.format(GET_FRIEND_URL, URLEncoder.encode("{\"email\":\"jike@example.com\"}", "UTF-8")), null);
 		String expected = "{\"status\":400,\"message\":\"jike@example.com has no friends\"}";
 		Assert.assertEquals("bc_GetAllFriends_hasNoFriends", expected, response.getBody());
 	}
 
 	@Test
-	public void ca_GetCommonFriends_success() {
-		Map<String, List<String>> map = new HashMap<>();
-		List<String> emails = new ArrayList<>();
-		emails.add("andy@example.com");
-		emails.add("lisa@example.com");
-		map.put("friends", emails);
-		ResponseEntity<String> response = requestToRestApi(HttpMethod.PUT, COMMON_FRIEND_URL, map);
+	public void ca_GetCommonFriends_success() throws UnsupportedEncodingException {
+		ResponseEntity<String> response = requestToRestApi(HttpMethod.GET, String.format(COMMON_FRIEND_URL, URLEncoder.encode("{\"friends\":[\"andy@example.com\",\"lisa@example.com\"]}", "UTF-8")), null);
 		String expected = "{\"success\":true,\"friends\":[\"john@example.com\"],\"count\":1}";
 		Assert.assertEquals("ca_GetCommonFriends_success", expected, response.getBody());
 	}
 
 	@Test
-	public void cb_GetCommonFriends_noCommonFriends() {
-		Map<String, List<String>> map = new HashMap<>();
-		List<String> emails = new ArrayList<>();
-		emails.add("andy@example.com");
-		emails.add("jike@example.com");
-		map.put("friends", emails);
-		ResponseEntity<String> response = requestToRestApi(HttpMethod.PUT, COMMON_FRIEND_URL, map);
+	public void cb_GetCommonFriends_noCommonFriends() throws UnsupportedEncodingException {
+		ResponseEntity<String> response = requestToRestApi(HttpMethod.GET, String.format(COMMON_FRIEND_URL, URLEncoder.encode("{\"friends\":[\"andy@example.com\",\"jike@example.com\"]}", "UTF-8")), null);
 		String expected = "{\"status\":404,\"message\":\"No common friends found\"}";
 		Assert.assertEquals("cb_GetCommonFriends_noCommonFriends", expected, response.getBody());
 	}
 
 	@Test
-	public void cc_GetCommonFriends_moreThanOne() {
+	public void cc_GetCommonFriends_moreThanOne() throws UnsupportedEncodingException {
 		Map<String, List<String>> map = new HashMap<>();
 		List<String> emails = new ArrayList<>();
 		emails.add("andy@example.com");
@@ -197,12 +180,8 @@ public class FriendManagementApplicationTests {
 		expected = "{\"success\":true}";
 		Assert.assertEquals("cc_GetCommonFriends_moreThanOne", expected, response.getBody());
 
-		map = new HashMap<>();
-		emails = new ArrayList<>();
-		emails.add("andy@example.com");
-		emails.add("lisa@example.com");
-		map.put("friends", emails);
-		response = requestToRestApi(HttpMethod.PUT, COMMON_FRIEND_URL, map);
+
+		response = requestToRestApi(HttpMethod.GET, String.format(COMMON_FRIEND_URL, URLEncoder.encode("{\"friends\":[\"andy@example.com\",\"lisa@example.com\"]}", "UTF-8")), null);
 		expected = "{\"success\":true,\"friends\":[\"susan@example.com\",\"john@example.com\"],\"count\":2}";
 		Assert.assertEquals("cc_GetCommonFriends_moreThanOne", expected, response.getBody());
 	}
@@ -289,21 +268,15 @@ public class FriendManagementApplicationTests {
 
 
 	@Test
-	public void fa_SubscribeEligible_success() {
-		Map<String, String> map = new HashMap<>();
-		map.put("sender", "lisa@example.com");
-		map.put("text", "greeting!!!");
-		ResponseEntity<String> response = requestToRestApi(HttpMethod.PUT, SUBSCRIBE_ELIGIBLE_URL, map);
+	public void fa_SubscribeEligible_success() throws UnsupportedEncodingException {
+		ResponseEntity<String> response = requestToRestApi(HttpMethod.GET, String.format(SUBSCRIBE_ELIGIBLE_URL, URLEncoder.encode("{\"sender\":\"lisa@example.com\",\"text\":\"Hello World! kate@example.com\"}", "UTF-8")), null);
 		String expected = "{\"success\":true,\"recipients\":[\"susan@example.com\",\"jike@example.com\"]}";
 		Assert.assertEquals("fa_SubscribeEligible_success", expected, response.getBody());
 	}
 
 	@Test
-	public void fb_SubscribeEligible_noEligiblePersons() {
-		Map<String, String> map = new HashMap<>();
-		map.put("sender", "george@example.com");
-		map.put("text", "greeting!!!");
-		ResponseEntity<String> response = requestToRestApi(HttpMethod.PUT, SUBSCRIBE_ELIGIBLE_URL, map);
+	public void fb_SubscribeEligible_noEligiblePersons() throws UnsupportedEncodingException {
+		ResponseEntity<String> response = requestToRestApi(HttpMethod.GET, String.format(SUBSCRIBE_ELIGIBLE_URL, URLEncoder.encode("{\"sender\":\"george@example.com\",\"text\":\"Hello World! kate@example.com\"}", "UTF-8")), null);
 		String expected = "{\"status\":404,\"message\":\"No persons subscribed to george@example.com\"}";
 		Assert.assertEquals("fa_SubscribeEligible_noEligiblePersons", expected, response.getBody());
 	}
@@ -313,7 +286,7 @@ public class FriendManagementApplicationTests {
 	}
 
 	private ResponseEntity<String> requestToRestApi(HttpMethod method, String url, Map map) {
-		HttpEntity<String> entity = new HttpEntity<String>(new JSONObject(map).toString(), headers);
+		HttpEntity<String> entity = new HttpEntity<String>(map == null ? null : new JSONObject(map).toString(), headers);
 		return restTemplate.exchange(createURLWithPort(url),
 				method, entity, String.class);
 	}

@@ -1,8 +1,6 @@
 package com.sp.sn.fm.model;
 
-import com.sp.sn.fm.exception.BusinessException;
-import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
-
+import javax.validation.ValidationException;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -20,4 +18,14 @@ public class FriendListReqModel {
         this.friends = friends;
     }
 
+    public void validate() {
+        if (friends == null || friends.size() != 2) {
+            throw new ValidationException("Invalid request input");
+        }
+        for (String email : friends) {
+            if (! com.sp.sn.fm.validator.EmailValidator.validate(email)) {
+                throw new ValidationException(("must be a well-formed email address"));
+            }
+        }
+    }
 }

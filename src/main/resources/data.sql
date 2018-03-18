@@ -4,4 +4,5 @@ INSERT INTO PERSON VALUES (3, 'lisa@example.com');
 INSERT INTO PERSON VALUES (4, 'susan@example.com');
 INSERT INTO PERSON VALUES (5, 'george@example.com');
 INSERT INTO PERSON VALUES (6, 'jike@example.com');
+INSERT INTO PERSON VALUES (7, 'kate@example.com');
 commit;
