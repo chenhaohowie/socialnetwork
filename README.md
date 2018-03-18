@@ -6,7 +6,7 @@ This module implements friend management of Social Network project.
 
 Please download the source code from.
 
-```https://github.com/chenhaohowie/socialnetwork```
+<https://github.com/chenhaohowie/socialnetwork>
 
 Go to the project folder and run below.
 
