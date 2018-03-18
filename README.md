@@ -38,3 +38,5 @@ For accessing Database, please use below URL.
 3. Four tables will be created during application startup. `PERSON` table will be mapped to the entity and the rest are join tables as many-to-many relationship. Predefined data `data.sql` will be loaded into `PERSON` table.
 4. To run the test cases only, use below
     * `mvn test`
+5. It uses H2 as the database for demonstration purpose, in real development environment, it can be replaced by Oracle or MariaDB RDBMS.
+    
