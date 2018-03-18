@@ -1,8 +1,8 @@
-##Social Network Project - Friend Management##
+== Social Network Project - Friend Management
 
 This module implements friend management of Social Network project.
 
-###Getting Started###
+== Installation and Getting Started
 
 Please download the source code from.
 
@@ -26,7 +26,7 @@ For accessing Database, please use below URL.
 
 <http://localhost:8080/h2/login.jsp>
 
-###Implementation details###
+== Implementation details
 
 1. The project is built on top of Spring Boot. Dependencies are Spring WEB + SPRING JPA + HIBERNATE + H2
 2. Class introduction:
